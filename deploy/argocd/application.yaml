@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: ai-gateway
+  namespace: argocd
+spec:
+  description: AI gateway delivered from a single trusted repository
+  sourceRepos:
+    - https://github.com/sunilmehta-si/ai-devsecops-cicd.git
+  destinations:
+    - namespace: ai-gateway
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: llm-gateway
+  namespace: argocd
+spec:
+  project: ai-gateway
+  source:
+    repoURL: https://github.com/sunilmehta-si/ai-devsecops-cicd.git
+    targetRevision: main
+    path: deploy/base
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ai-gateway
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
