@@ -35,7 +35,7 @@ RULES: list[tuple[str, re.Pattern[str]]] = [
     (
         "hardcoded-credential",
         re.compile(
-            r"(?i)\b(password|passwd|secret|token|api[_-]?key|access[_-]?key)\b"
+            r"(?i)[a-z0-9_.-]*(?:password|passwd|secret|token|api[_-]?key|access[_-]?key)[a-z0-9_.-]*"
             r"\s*[:=]\s*['\"]([^'\"\s]{12,})['\"]"
         ),
     ),
@@ -57,10 +57,8 @@ class Finding:
     line: str
 
     def render(self) -> str:
-        shown = self.line.strip()
-        if len(shown) > 60:
-            shown = shown[:30] + "...[truncated]"
-        return f"  [{self.rule}] {self.where}: {shown}"
+        # Never echo the offending line: a CI log must not become a second leak.
+        return f"  [{self.rule}] {self.where}"
 
 
 def scan_line(line: str) -> list[str]:
@@ -71,7 +69,7 @@ def scan_line(line: str) -> list[str]:
         match = pattern.search(line)
         if not match:
             continue
-        if name == "hardcoded-credential" and PLACEHOLDER.search(match.group(2)):
+        if name == "hardcoded-credential" and PLACEHOLDER.search(match.group(1)):
             continue
         hits.append(name)
     return hits
