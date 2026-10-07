@@ -40,7 +40,7 @@ jobs:
         run: |
           pip install semgrep
           semgrep scan --config p/python --config p/owasp-top-ten --error --sarif --output semgrep.sarif apps scripts
-      - uses: github/codeql-action/upload-sarif@v3
+      - uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: semgrep.sarif
@@ -66,7 +66,7 @@ jobs:
           output: trivy-config.sarif
           # Without this, SARIF output includes every severity and the gate fails on LOW/MEDIUM.
           limit-severities-for-sarif: true
-      - uses: github/codeql-action/upload-sarif@v3
+      - uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: trivy-config.sarif
