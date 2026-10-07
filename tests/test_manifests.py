@@ -33,6 +33,7 @@ class ManifestTests(unittest.TestCase):
             "foreign registry": lambda s: s["containers"][0].update(image="docker.io/library/nginx:1.27"),
             "writable root": lambda s: s["containers"][0]["securityContext"].update(readOnlyRootFilesystem=False),
             "no limits": lambda s: s["containers"][0].pop("resources"),
+            "no cpu limit": lambda s: s["containers"][0]["resources"]["limits"].pop("cpu"),
             "keeps capabilities": lambda s: s["containers"][0]["securityContext"].pop("capabilities"),
             "runs as root": lambda s: s["securityContext"].update(runAsNonRoot=False),
             "host network": lambda s: s.update(hostNetwork=True),

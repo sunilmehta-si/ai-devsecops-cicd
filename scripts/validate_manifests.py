@@ -52,8 +52,8 @@ def check_workload(doc: dict) -> list[str]:
         res = c.get("resources") or {}
         if not (res.get("requests") or {}).get("cpu") or not (res.get("requests") or {}).get("memory"):
             problems.append(f"{cname}: cpu and memory requests are required")
-        if not (res.get("limits") or {}).get("memory"):
-            problems.append(f"{cname}: a memory limit is required")
+        if not (res.get("limits") or {}).get("cpu") or not (res.get("limits") or {}).get("memory"):
+            problems.append(f"{cname}: cpu and memory limits are required")
     return problems
 
 

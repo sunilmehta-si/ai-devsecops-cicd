@@ -47,4 +47,5 @@ spec:
                     cpu: "?*"
                     memory: "?*"
                   limits:
+                    cpu: "?*"
                     memory: "?*"

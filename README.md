@@ -57,6 +57,8 @@ Python 3.10+ and PyYAML are the only requirements. No GPU, API key or cloud acco
 
 - Verified locally: unit tests, the AI security corpus, manifest validation, YAML lint and a secret scan of
   every commit.
-- Written but not yet exercised: the GitHub Actions workflows (including signing) and the Kyverno policies
-  need a first push and a cluster. The badge above turns green only after a real run.
+- Verified in GitHub Actions: all four workflows pass on `main`, including the image build, Trivy scan,
+  SBOM and AI-BOM generation, keyless cosign signing and signature verification.
+- Written but not yet exercised: the Kyverno policies need a cluster. The offline validator mirrors them
+  and runs in CI, but admission-time enforcement has not been tested against a live API server.
 - Limits and next steps are listed in [docs/threat-model.md](docs/threat-model.md).
