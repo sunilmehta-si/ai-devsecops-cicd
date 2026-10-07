@@ -1,0 +1,11 @@
+# Inventory of every model the system ships or calls. The AI-BOM is generated from this file.
+# Entries with `path` are hashed from the repository; external models must pin a sha256.
+models:
+  - id: gateway-mock-model
+    name: Deterministic mock model
+    version: "1.0.0"
+    source: first-party
+    path: apps/llm_gateway/server.py
+    license: MIT
+    purpose: Stand-in for a real model so the pipeline can be exercised without GPUs or API keys
+    serialization: python-source
