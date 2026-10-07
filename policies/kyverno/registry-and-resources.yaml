@@ -1,0 +1,50 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: registry-and-resources
+  annotations:
+    policies.kyverno.io/title: Trusted registry, pinned tags and resource limits
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: trusted-registry-only
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+      validate:
+        message: "Images must come from ghcr.io/sunilmehta-si/."
+        pattern:
+          spec:
+            containers:
+              - image: "ghcr.io/sunilmehta-si/*"
+    - name: no-latest-tag
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+      validate:
+        message: "The :latest tag is not allowed; deploy an immutable tag or digest."
+        pattern:
+          spec:
+            containers:
+              - image: "!*:latest"
+    - name: require-limits
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+      validate:
+        message: "CPU and memory requests and limits are required."
+        pattern:
+          spec:
+            containers:
+              - resources:
+                  requests:
+                    cpu: "?*"
+                    memory: "?*"
+                  limits:
+                    memory: "?*"
