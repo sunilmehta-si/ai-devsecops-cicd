@@ -1,0 +1,51 @@
+name: ai-security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  injection-corpus:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Replay prompt-injection and leakage corpus
+        run: python3 scripts/run_ai_security.py
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-security-report
+          path: reports/ai-security.json
+
+  gateway-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Start gateway with a throwaway key and verify auth is enforced
+        run: |
+          KEY="$(openssl rand -hex 24)"
+          echo "::add-mask::$KEY"
+          GATEWAY_API_KEY="$KEY" PORT=8080 python3 -m apps.llm_gateway.server &
+          for _ in $(seq 1 20); do curl -fs localhost:8080/healthz >/dev/null && break; sleep 0.5; done
+          body='{"messages":[{"role":"user","content":"ping"}]}'
+          code_noauth=$(curl -s -o /dev/null -w '%{http_code}' -d "$body" localhost:8080/v1/chat/completions)
+          code_auth=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $KEY" -d "$body" localhost:8080/v1/chat/completions)
+          echo "without key: $code_noauth, with key: $code_auth"
+          test "$code_noauth" = "401" && test "$code_auth" = "200"
