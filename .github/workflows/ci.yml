@@ -31,3 +31,5 @@ jobs:
         run: make secrets secrets-history
       - name: YAML and workflow permission lint
         run: make lint-yaml
+      - name: Validate Kubernetes manifests against admission rules
+        run: python3 scripts/validate_manifests.py
