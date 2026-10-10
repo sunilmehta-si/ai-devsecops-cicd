@@ -1,32 +1,41 @@
 # AI DevSecOps CI/CD
 
-[![ci](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/ci.yml/badge.svg)](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/ci.yml)
+[![ci](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/ci.yml/badge.svg)](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/ci.yml) [![security-scan](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/security.yml/badge.svg)](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/security.yml) [![ai-security](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/ai-security.yml/badge.svg)](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/ai-security.yml) [![build-scan-sign](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/build-sign.yml/badge.svg)](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/build-sign.yml)
 
 A reference pipeline for shipping LLM and AI-agent services safely: **scan, test, sign, gate, deploy**.
 Built by [Sunil Mehta](https://github.com/sunilmehta-si) as a companion to
-[llm-inference-platform](https://github.com/sunilmehta-si/llm-inference-platform) and
-[jev-inference-router](https://github.com/sunilmehta-si/jev-inference-router).
+[llm-inference-platform](https://github.com/sunilmehta-si/llm-inference-platform),
+[jev-inference-router](https://github.com/sunilmehta-si/jev-inference-router) and
+[agentic-code-review-tool](https://github.com/sunilmehta-si/agentic-code-review-tool), which reviews pull requests
+for the same classes of risk this pipeline blocks.
 
 The point is the pipeline, not the app. A small dependency-free gateway and agent tool layer give the
 controls something real to protect.
 
 ## Pipeline
 
+```mermaid
+flowchart TB
+    dev[Developer commit] --> hook[pre-commit secret scan]
+    hook --> pr[Push / pull request]
+    pr --> ci[ci.yml<br/>tests · history secret scan<br/>YAML + permission lint · manifest rules]
+    pr --> sec[security.yml<br/>Gitleaks · Semgrep SARIF · Trivy config]
+    pr --> ai[ai-security.yml<br/>OWASP LLM injection + leakage corpus<br/>gateway auth smoke test]
+    ci & sec & ai --> main[Merge to main]
+    main --> build[build-sign.yml]
+    subgraph supply[Supply chain on main]
+        build --> scan[Trivy image scan<br/>blocks HIGH/CRITICAL]
+        scan --> bom[SBOM + AI-BOM]
+        bom --> sign[Keyless cosign sign + attest]
+        sign --> verify[Verify signature<br/>against this workflow]
+    end
+    verify --> argo[Argo CD GitOps sync<br/>self-heal]
+    argo --> kyverno{Kyverno admission}
+    kyverno -->|signed, hardened, trusted registry| run[Running in cluster]
+    kyverno -->|anything else| deny[Rejected]
 ```
-commit ──► pre-commit secret scan
-   │
-   ▼
-push / PR ─► ci.yml            tests, full-history secret scan, YAML + permission lint, manifest rules
-          ─► security.yml      Gitleaks, Semgrep (SARIF), Trivy config scan
-          ─► ai-security.yml   OWASP-mapped injection and leakage corpus, gateway auth smoke test
-   │
-   ▼
-main ────► build-sign.yml      build ─► Trivy image scan ─► SBOM + AI-BOM ─► keyless cosign sign + attest ─► verify
-   │
-   ▼
-cluster ─► Kyverno             admit only images signed by build-sign.yml, hardened pods, trusted registry
-        ─► Argo CD             GitOps sync from deploy/base with self-heal
-```
+
+Every workflow runs with a least-privilege token, and every action is pinned to a full commit SHA that Dependabot keeps current.
 
 ## What is in the box
 
