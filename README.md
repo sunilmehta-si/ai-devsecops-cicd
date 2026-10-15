@@ -1,6 +1,6 @@
 # AI DevSecOps CI/CD
 
-[![ci](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/ci.yml/badge.svg)](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/ci.yml) [![security-scan](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/security.yml/badge.svg)](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/security.yml) [![ai-security](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/ai-security.yml/badge.svg)](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/ai-security.yml) [![build-scan-sign](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/build-sign.yml/badge.svg)](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/build-sign.yml)
+[![ci](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/ci.yml/badge.svg)](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/ci.yml) [![security-scan](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/security.yml/badge.svg)](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/security.yml) [![ai-security](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/ai-security.yml/badge.svg)](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/ai-security.yml) [![build-scan-sign](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/build-sign.yml/badge.svg)](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/build-sign.yml) [![code-review](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/code-review.yml/badge.svg)](https://github.com/sunilmehta-si/ai-devsecops-cicd/actions/workflows/code-review.yml)
 
 A reference pipeline for shipping LLM and AI-agent services safely: **scan, test, sign, gate, deploy**.
 Built by [Sunil Mehta](https://github.com/sunilmehta-si) as a companion to
@@ -36,6 +36,8 @@ flowchart TB
 ```
 
 Every workflow runs with a least-privilege token, and every action is pinned to a full commit SHA that Dependabot keeps current.
+Every pull request is also reviewed by [agentic-code-review-tool](https://github.com/sunilmehta-si/agentic-code-review-tool)
+(`code-review.yml`), which comments on risky changes to the app, workflows, manifests and AI code.
 
 ## What is in the box
 

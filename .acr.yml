@@ -1,0 +1,5 @@
+# agentic-code-review-tool settings. Test fixtures contain deliberate secrets and attack strings
+# (they test this repo's own secret scan and AI security corpus), so they are not reviewed.
+fail_on: high
+exclude:
+  - "tests/*"
