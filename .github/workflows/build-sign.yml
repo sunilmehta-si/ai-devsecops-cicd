@@ -40,7 +40,9 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           load: ${{ github.event_name == 'pull_request' }}
           tags: ${{ env.IMAGE }}:${{ github.sha }}
-          provenance: mode=max
+          # Provenance turns the image into a manifest list, which the docker exporter used by `load` on pull
+          # requests can't import. Attest provenance only when pushing; PRs build a plain image to scan.
+          provenance: ${{ github.event_name != 'pull_request' && 'mode=max' || 'false' }}
           sbom: false
       - name: Scan image (blocks on HIGH or CRITICAL)
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
