@@ -73,3 +73,12 @@ Python 3.10+ and PyYAML are the only requirements. No GPU, API key or cloud acco
 - Written but not yet exercised: the Kyverno policies need a cluster. The offline validator mirrors them
   and runs in CI, but admission-time enforcement has not been tested against a live API server.
 - Limits and next steps are listed in [docs/threat-model.md](docs/threat-model.md).
+
+## Related projects
+
+Other open-source infrastructure work by [Sunil Mehta](https://github.com/sunilmehta-si):
+
+- [agentic-code-review-tool](https://github.com/sunilmehta-si/agentic-code-review-tool): Scanner-grounded AI code review for the whole pull request: app, infrastructure and AI/agent code.
+- [k8s-gpu-scheduler-benchmark](https://github.com/sunilmehta-si/k8s-gpu-scheduler-benchmark): Benchmarks Kubernetes GPU schedulers (default, Kueue, Volcano, KAI) in simulation and on real clusters.
+- [llm-inference-platform](https://github.com/sunilmehta-si/llm-inference-platform): GPU-backed LLM serving with a streaming gateway, monitoring and reproducible benchmarks.
+- [jev-inference-router](https://github.com/sunilmehta-si/jev-inference-router): Observable decision routing for local GPU inference, evaluated against rule-based and classifier baselines.
