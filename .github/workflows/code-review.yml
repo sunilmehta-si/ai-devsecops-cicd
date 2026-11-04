@@ -21,7 +21,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: sunilmehta-si/agentic-code-review-tool@a7e0a2eac4da85c81831eacd2189902ace39d39a # v0.5.0
+      - uses: sunilmehta-si/agentic-code-review-tool@e69bb4249ba8262d3a7dc99619de40bedef4c09d # v0.8.0
         with:
           fail-on: high
           ai: none
