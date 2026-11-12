@@ -1,10 +1,16 @@
 version: 2
 updates:
+  # Wait 14 days after a release before proposing it, so a compromised or broken release is usually caught
+  # first. Security updates are not held back.
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 14
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 14
