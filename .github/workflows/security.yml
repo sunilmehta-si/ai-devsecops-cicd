@@ -35,7 +35,9 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          python-version: "3.15"
+          # Semgrep's own runtime: its releases support Python up to 3.14 and its engine crashes on 3.15.
+          # The code it scans is tested on 3.15 in ci.yml.
+          python-version: "3.14"
       - name: Semgrep
         run: |
           pip install semgrep

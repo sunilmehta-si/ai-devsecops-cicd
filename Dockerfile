@@ -13,6 +13,11 @@ RUN apt-get update \
     && apt-get upgrade -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
+# The gateway uses only the standard library, so the image ships without pip. pip carries its own copies of
+# urllib3, msgpack and pkg_resources, which the image scan judges like any other code in the image.
+RUN python -m pip uninstall --yes --no-input pip \
+    && rm -f /usr/local/lib/python3*/ensurepip/_bundled/*.whl
+
 RUN groupadd --system --gid 10001 app && useradd --system --uid 10001 --gid app --no-create-home app
 
 WORKDIR /srv
