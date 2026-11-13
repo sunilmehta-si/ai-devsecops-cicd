@@ -36,6 +36,8 @@ flowchart TB
 ```
 
 Every workflow runs with a least-privilege token, and every action is pinned to a full commit SHA that Dependabot keeps current.
+The Python tools the workflows install (Semgrep, PyYAML) come from hash-locked files in `.github/requirements/`, locked by
+`make requirements` from releases at least 14 days old, and a test fails any workflow that installs a package another way.
 Every pull request is also reviewed by [agentic-code-review-tool](https://github.com/sunilmehta-si/agentic-code-review-tool)
 (`code-review.yml`), which comments on risky changes to the app, workflows, manifests and AI code.
 

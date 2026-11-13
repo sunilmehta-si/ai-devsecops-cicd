@@ -1,0 +1,2 @@
+# Semgrep for the sast job in security.yml. Runs on Python 3.14: semgrep-core crashes on 3.15.
+semgrep==1.183.0
