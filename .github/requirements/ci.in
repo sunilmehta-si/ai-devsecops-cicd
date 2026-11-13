@@ -1,0 +1,2 @@
+# Tools the CI and build workflows install on top of the standard library.
+pyyaml==6.0.3

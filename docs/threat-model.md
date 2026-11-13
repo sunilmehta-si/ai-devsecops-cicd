@@ -17,6 +17,8 @@ Scope: the sample LLM gateway, the agent tool layer, and the pipeline that build
 
 - The corpus tests deterministic guards. It is not a live evaluation of a real model's behaviour; use a
   red-team tool such as promptfoo against a real model for that.
-- Third-party actions are referenced by version tag. Dependabot keeps them current; pinning to commit SHAs
-  is the next hardening step.
+- Third-party actions are pinned to commit SHAs and the Python tools the workflows install (Semgrep, PyYAML) to
+  hashes in `.github/requirements/`. `make requirements` locks only releases at least 14 days old, dependencies
+  included; Dependabot's 14-day cooldown applies to the package it bumps, not to the dependencies it re-locks with
+  it, so read its lock diffs before merging.
 - The Kyverno policies and the signing flow need a cluster and a first run on GitHub to be exercised end to end.
