@@ -1,0 +1,8 @@
+# Security fixes that Semgrep's own pins hold back: every Semgrep release up to 1.187.0 pins mcp==1.29.0 and
+# wcmatch~=8.3. `make requirements` writes these into semgrep.txt in place of Semgrep's choice, with their hashes, and
+# the sast job installs that lock with --no-deps so pip does not put Semgrep's pins back. Semgrep scans the same
+# with them (same files scanned, same findings, the same --exclude matching). Drop a line once Semgrep allows it.
+# GHSA-qx49-fqc8-xw99: the MCP SDK's OAuth client could send credentials to a server the MCP server chose.
+mcp==1.30.0
+# GHSA-53pm-wgxf-c6qf: polynomial-time ReDoS matching untrusted names against multi-star patterns.
+wcmatch==11.2

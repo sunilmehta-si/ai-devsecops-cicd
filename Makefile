@@ -24,3 +24,4 @@ requirements:
 	  python3 -m piptools compile --quiet --generate-hashes --allow-unsafe --strip-extras --no-emit-index-url \
 	    --pip-args '--uploaded-prior-to P14D' $$f.in; \
 	done
+	python3 scripts/override_lock.py .github/requirements/semgrep.overrides .github/requirements/semgrep.txt
