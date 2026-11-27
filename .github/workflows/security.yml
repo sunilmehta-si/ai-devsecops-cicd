@@ -39,8 +39,10 @@ jobs:
           # The code it scans is tested on 3.15 in ci.yml.
           python-version: "3.14"
       - name: Semgrep
+        # --no-deps keeps the lock's versions where it overrides Semgrep's own pins for a security fix
+        # (.github/requirements/semgrep.overrides); the lock holds every dependency, so nothing is missed.
         run: |
-          pip install --require-hashes -r .github/requirements/semgrep.txt
+          pip install --no-deps --require-hashes -r .github/requirements/semgrep.txt
           semgrep scan --config p/python --config p/owasp-top-ten --error --sarif --output semgrep.sarif apps scripts
       - uses: github/codeql-action/upload-sarif@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
         if: always()

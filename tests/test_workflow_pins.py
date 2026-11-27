@@ -22,7 +22,7 @@ class WorkflowPinTests(unittest.TestCase):
         self.assertTrue(installs)
         for name, line in installs:
             with self.subTest(workflow=name, line=line):
-                m = re.search(r"pip3? install --require-hashes -r (\.github/requirements/[\w-]+\.txt)$", line)
+                m = re.search(r"pip3? install (?:--no-deps )?--require-hashes -r (\.github/requirements/[\w-]+\.txt)$", line)
                 self.assertIsNotNone(m, "install from a lock in .github/requirements with --require-hashes")
                 self.assertTrue((ROOT / m.group(1)).is_file())
 
@@ -45,6 +45,19 @@ class WorkflowPinTests(unittest.TestCase):
         block = config.split("package-ecosystem: pip", 1)[1].split("- package-ecosystem:", 1)[0]
         self.assertIn("directory: /.github/requirements", block)
         self.assertRegex(block, r"cooldown:\s*\n\s*default-days: 14")
+
+    def test_the_semgrep_lock_keeps_its_security_overrides(self):
+        # Semgrep pins mcp and wcmatch to versions with advisories; the lock overrides them, and pip must not put
+        # Semgrep's pins back, which it would without --no-deps. A lock regenerated without the overrides (a
+        # Dependabot bump of semgrep, say) fails here.
+        wanted = pins((LOCKS / "semgrep.overrides").read_text())
+        self.assertEqual(sorted(wanted), ["mcp", "wcmatch"])
+        lock = pins((LOCKS / "semgrep.txt").read_text())
+        for name, version in wanted.items():
+            self.assertEqual(lock.get(name), version, name)
+        job = (ROOT / ".github/workflows/security.yml").read_text().split("  sast:", 1)[1].split("\n  filesystem-and-config:", 1)[0]
+        self.assertIn("pip install --no-deps --require-hashes -r .github/requirements/semgrep.txt", job)
+        self.assertIn("override_lock.py .github/requirements/semgrep.overrides .github/requirements/semgrep.txt", (ROOT / "Makefile").read_text())
 
     def test_semgrep_runs_on_the_python_its_lock_was_compiled_for(self):
         text = (ROOT / ".github/workflows/security.yml").read_text()
